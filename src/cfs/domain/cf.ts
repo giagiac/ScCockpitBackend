@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CfComm } from '../../cf-comms/domain/cf-comm';
-import { ArticoliCostiCf } from '../../articoli-costi-cf/domain/articoli-costi-cf';
 
 export class Cf {
   @ApiProperty({
@@ -68,14 +66,4 @@ export class Cf {
     nullable: true,
   })
   INDI_CF?: string | null;
-
-  @ApiProperty({
-    type: () => Array<CfComm | null>,
-  })
-  cfComm?: CfComm[] | null;
-
-  @ApiProperty({
-    type: () => Array<ArticoliCostiCf | null>,
-  })
-  articoliCostiCf?: ArticoliCostiCf[] | null;
 }

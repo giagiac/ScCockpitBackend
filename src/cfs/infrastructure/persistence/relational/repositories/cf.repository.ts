@@ -9,16 +9,12 @@ import { CfDto } from '../../../../dto/cf.dto';
 import { CfRepository } from '../../cf.repository';
 import { CfEntity, DEFAULT } from '../entities/cf.entity';
 import { CfMapper } from '../mappers/cf.mapper';
-import { ArticoliCostiCfEntity } from '../../../../../articoli-costi-cf/infrastructure/persistence/relational/entities/articoli-costi-cf.entity';
-import { ArticoliCostiCf } from '../../../../../articoli-costi-cf/domain/articoli-costi-cf';
 
 @Injectable()
 export class CfRelationalRepository implements CfRepository {
   constructor(
     @InjectRepository(CfEntity)
     private readonly cfRepository: Repository<CfEntity>,
-    @InjectRepository(ArticoliCostiCfEntity)
-    private readonly articoliCostiCfRepository: Repository<ArticoliCostiCfEntity>,
   ) {}
 
   async create(data: Cf): Promise<Cf> {
@@ -75,24 +71,6 @@ export class CfRelationalRepository implements CfRepository {
 
     let cfEntities: Array<Cf> = entitiesAndCount[0].map((entity) => CfMapper.toDomain(entity));
     let cfCount = entitiesAndCount[1];
-
-    if (paginationOptions.page == 1) {
-      const articoliCostiCf = await this.articoliCostiCfRepository
-        .createQueryBuilder('articoliCostiCf')
-        .leftJoinAndSelect('articoliCostiCf.artAna', 'artAna')
-        .leftJoinAndSelect('artAna.artCosti', 'artCosti')
-        .where('articoliCostiCf.COD_CF=:COD_CF', { COD_CF: DEFAULT.COD_CF })
-        .getMany();
-
-      cfEntities = [
-        {
-          COD_CF: DEFAULT.COD_CF,
-          articoliCostiCf: articoliCostiCf,
-        },
-        ...cfEntities,
-      ];
-      cfCount += 1;
-    }
 
     return {
       cf: cfEntities,

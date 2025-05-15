@@ -1,5 +1,3 @@
-import { ArticoliCostiCfMapper } from '../../../../../articoli-costi-cf/infrastructure/persistence/relational/mappers/articoli-costi-cf.mapper';
-import { CfCommMapper } from '../../../../../cf-comms/infrastructure/persistence/relational/mappers/cf-comm.mapper';
 import { Cf } from '../../../../domain/cf';
 
 import { CfEntity } from '../entities/cf.entity';
@@ -30,19 +28,6 @@ export class CfMapper {
     domainEntity.STATO_CF = raw.STATO_CF;
 
     domainEntity.REGIONE = raw.REGIONE;
-
-    if (raw.cfComm != null) {
-      domainEntity.cfComm = [];
-      domainEntity.cfComm = raw.cfComm.map((it) => {
-        return CfCommMapper.toDomain(it);
-      });
-    }
-
-    if (raw.articoliCostiCf != null) {
-      domainEntity.articoliCostiCf = raw.articoliCostiCf.map((it) => {
-        return ArticoliCostiCfMapper.toDomain(it);
-      });
-    }
 
     return domainEntity;
   }

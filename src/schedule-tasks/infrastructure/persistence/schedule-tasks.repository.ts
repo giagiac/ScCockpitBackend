@@ -8,7 +8,7 @@ export abstract class ScheduleTasksRepository {
 
   abstract findAllWithPagination({ paginationOptions }: { paginationOptions: IPaginationOptions }): Promise<ScheduleTasks[]>;
 
-  abstract findAllEsec(id: ScheduleTasks['id'] | null): Promise<any>;
+  abstract trigger(id: ScheduleTasks['id'] | null): Promise<any>;
 
   abstract findById(id: ScheduleTasks['id']): Promise<NullableType<ScheduleTasks>>;
 

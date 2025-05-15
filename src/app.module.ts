@@ -27,6 +27,9 @@ import { MailerModule } from './mailer/mailer.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
+import { OracleConnectionOptions } from 'typeorm/driver/oracle/OracleConnectionOptions';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleTasksModule } from './schedule-tasks/schedule-tasks.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -37,7 +40,10 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
   : TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
       dataSourceFactory: async (options: DataSourceOptions) => {
-        return new DataSource(options).initialize();
+        return new DataSource({
+          ...options,
+          sid: 'db',
+        } as OracleConnectionOptions).initialize();
       },
     });
 // </database-block>
@@ -92,6 +98,7 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     MailModule,
     MailerModule,
     HomeModule,
+    ScheduleTasksModule
   ],
 })
 export class AppModule {}

@@ -37,12 +37,12 @@ export class ScheduleTasksService implements OnApplicationBootstrap {
     });
   }
 
-  findAllEsec() {
-    return this.scheduleTasksRepository.findAllEsec(null);
+  trigger() {
+    return this.scheduleTasksRepository.trigger(null);
   }
 
   findAllEsecById(id: ScheduleTasks['id']) {
-    return this.scheduleTasksRepository.findAllEsec(id);
+    return this.scheduleTasksRepository.trigger(id);
   }
 
   findById(id: ScheduleTasks['id']) {
@@ -125,6 +125,6 @@ export class ScheduleTasksService implements OnApplicationBootstrap {
   async handleCronLiveOrders() {
     this.logger.log("1. Avvio dell'attività pianificata...");
     // await this.myAsyncTask();
-    return await this.scheduleTasksRepository.findAllEsec(null);
+    return await this.scheduleTasksRepository.trigger(null);
   }
 }

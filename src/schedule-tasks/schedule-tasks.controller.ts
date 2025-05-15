@@ -1,21 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ScheduleTasksService } from './schedule-tasks.service';
-import { CreateScheduleTasksDto } from './dto/create-schedule-tasks.dto';
-import { UpdateScheduleTasksDto } from './dto/update-schedule-tasks.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ScheduleTasks } from './domain/schedule-tasks';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 import { InfinityPaginationResponse, InfinityPaginationResponseDto } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { ScheduleTasks } from './domain/schedule-tasks';
+import { CreateScheduleTasksDto } from './dto/create-schedule-tasks.dto';
 import { FindAllScheduleTasksDto } from './dto/find-all-schedule-tasks.dto';
-import { RolesGuard } from '../roles/roles.guard';
-import { RoleEnum } from '../roles/roles.enum';
-import { Roles } from '../roles/roles.decorator';
+import { UpdateScheduleTasksDto } from './dto/update-schedule-tasks.dto';
+import { ScheduleTasksService } from './schedule-tasks.service';
 
 @ApiTags('Scheduletasks')
-@ApiBearerAuth()
-@Roles(RoleEnum.admin)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @Roles(RoleEnum.admin)
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'schedule-tasks',
   version: '1',
@@ -53,10 +53,10 @@ export class ScheduleTasksController {
     );
   }
 
-  @Get('find-all-esec')
+  @Get('trigger')
   @ApiOkResponse()
-  async findAllEsec(): Promise<any> {
-    return await this.scheduleTasksService.findAllEsec();
+  async trigger(): Promise<any> {
+    return await this.scheduleTasksService.trigger();
   }
 
   @Get('find-all-esec-by-id/:id')
