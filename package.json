@@ -59,6 +59,7 @@
     "@nestjs/mongoose": "11.0.3",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.0.20",
+    "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "11.1.4",
     "@nestjs/typeorm": "11.0.0",
     "@types/multer-s3": "3.0.3",
@@ -67,6 +68,7 @@
     "bcryptjs": "3.0.2",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
+    "csvtojson": "^2.0.10",
     "dotenv": "16.5.0",
     "fb": "2.0.0",
     "google-auth-library": "9.15.1",
@@ -86,6 +88,7 @@
     "rimraf": "6.0.1",
     "rxjs": "7.8.2",
     "source-map-support": "0.5.21",
+    "ssh2-sftp-client": "^12.0.0",
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.22"
   },
