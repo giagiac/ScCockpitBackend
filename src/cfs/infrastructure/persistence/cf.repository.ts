@@ -6,7 +6,9 @@ import { Cf } from '../../domain/cf';
 import { CfDto } from '../../dto/cf.dto';
 
 export abstract class CfRepository {
-  abstract create(data: Omit<Cf, 'id' | 'createdAt' | 'updatedAt'>): Promise<Cf>;
+  abstract create(
+    data: Omit<Cf, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<Cf>;
 
   abstract findAllWithPagination({
     filterOptions,
@@ -24,7 +26,10 @@ export abstract class CfRepository {
 
   abstract findByIds(ids: Cf['COD_CF'][]): Promise<Cf[]>;
 
-  abstract update(id: Cf['COD_CF'], payload: DeepPartial<Cf>): Promise<Cf | null>;
+  abstract update(
+    id: Cf['COD_CF'],
+    payload: DeepPartial<Cf>,
+  ): Promise<Cf | null>;
 
   abstract remove(id: Cf['COD_CF']): Promise<void>;
 }

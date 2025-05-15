@@ -48,8 +48,11 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     });
 // </database-block>
 
+import { ArtCodicisModule } from './art-codicis/art-codicis.module';
+
 @Module({
   imports: [
+    ArtCodicisModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -98,7 +101,7 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     MailModule,
     MailerModule,
     HomeModule,
-    ScheduleTasksModule
+    ScheduleTasksModule,
   ],
 })
 export class AppModule {}

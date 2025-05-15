@@ -5,7 +5,8 @@ import { RelationalAppReq3HypServPersistenceModule } from './infrastructure/pers
 import databaseConfig from '../database/config/database.config';
 import { DatabaseConfig } from '../database/config/database-config.type';
 
-const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
+const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
+  .isDocumentDatabase
   ? RelationalAppReq3HypServPersistenceModule
   : RelationalAppReq3HypServPersistenceModule;
 

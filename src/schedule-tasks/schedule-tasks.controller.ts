@@ -1,10 +1,29 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
-import { InfinityPaginationResponse, InfinityPaginationResponseDto } from '../utils/dto/infinity-pagination-response.dto';
+import {
+  InfinityPaginationResponse,
+  InfinityPaginationResponseDto,
+} from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { ScheduleTasks } from './domain/schedule-tasks';
 import { CreateScheduleTasksDto } from './dto/create-schedule-tasks.dto';
@@ -35,7 +54,9 @@ export class ScheduleTasksController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(ScheduleTasks),
   })
-  async findAll(@Query() query: FindAllScheduleTasksDto): Promise<InfinityPaginationResponseDto<ScheduleTasks>> {
+  async findAll(
+    @Query() query: FindAllScheduleTasksDto,
+  ): Promise<InfinityPaginationResponseDto<ScheduleTasks>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
@@ -94,7 +115,10 @@ export class ScheduleTasksController {
   @ApiOkResponse({
     type: ScheduleTasks,
   })
-  update(@Param('id') id: string, @Body() updateScheduleTasksDto: UpdateScheduleTasksDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateScheduleTasksDto: UpdateScheduleTasksDto,
+  ) {
     return this.scheduleTasksService.update(id, updateScheduleTasksDto);
   }
 

@@ -31,7 +31,11 @@ export class AppReq3HypServsService {
     });
   }
 
-  findAllWithPagination({ paginationOptions }: { paginationOptions: IPaginationOptions }) {
+  findAllWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }) {
     return this.appReq3HypServRepository.findAllWithPagination({
       paginationOptions: {
         page: paginationOptions.page,

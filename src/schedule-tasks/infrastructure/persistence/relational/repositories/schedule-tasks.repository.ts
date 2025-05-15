@@ -7,23 +7,19 @@ import { NullableType } from '../../../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { ScheduleTasks } from '../../../../domain/schedule-tasks';
 import { ScheduleTasksRepository } from '../../schedule-tasks.repository';
-import {
-  APP_REQ3_HYPSERV_TIPO_RICHIESTA,
-  ScheduleTasksEntity,
-  separator,
-  TIPO_ERRORI_SYNC,
-} from '../entities/schedule-tasks.entity';
+import { APP_REQ3_HYPSERV_TIPO_RICHIESTA, ScheduleTasksEntity, separator, TIPO_ERRORI_SYNC } from '../entities/schedule-tasks.entity';
 import { ScheduleTasksMapper } from '../mappers/schedule-tasks.mapper';
 
 import csv from 'csvtojson';
 
 import Client from 'ssh2-sftp-client';
+import { ArtCodiciEntity } from '../../../../../art-codicis/infrastructure/persistence/relational/entities/art-codici.entity';
 
 interface FileRemote {
   nomeFile: string;
   dataModificata: Date;
   contenuto: string;
-  jsonArrayObj: Array<RigheCsv>
+  jsonArrayObj: Array<RigheCsv>;
 }
 
 interface RigheCsv {
@@ -57,6 +53,9 @@ const appReqTestataDefaultParams = [
   separator, // 1
   'tv_row_head.COD_CAUS_DOC=',
   '',
+  separator, // 1
+  'tv_row_head.NOTE_STAMPA=',
+  '',
   separator,
   // 'tv_row_head.DATA_DOC=', '', separator,
 ];
@@ -75,9 +74,7 @@ const appReqRigaDefaultParams = [
 ];
 
 @Injectable()
-export class ScheduleTasksRelationalRepository
-  implements ScheduleTasksRepository
-{
+export class ScheduleTasksRelationalRepository implements ScheduleTasksRepository {
   constructor(
     @InjectRepository(ScheduleTasksEntity)
     private readonly scheduleTasksRepository: Repository<ScheduleTasksEntity>,
@@ -85,17 +82,11 @@ export class ScheduleTasksRelationalRepository
 
   async create(data: ScheduleTasks): Promise<ScheduleTasks> {
     const persistenceModel = ScheduleTasksMapper.toPersistence(data);
-    const newEntity = await this.scheduleTasksRepository.save(
-      this.scheduleTasksRepository.create(persistenceModel),
-    );
+    const newEntity = await this.scheduleTasksRepository.save(this.scheduleTasksRepository.create(persistenceModel));
     return ScheduleTasksMapper.toDomain(newEntity);
   }
 
-  async findAllWithPagination({
-    paginationOptions,
-  }: {
-    paginationOptions: IPaginationOptions;
-  }): Promise<ScheduleTasks[]> {
+  async findAllWithPagination({ paginationOptions }: { paginationOptions: IPaginationOptions }): Promise<ScheduleTasks[]> {
     const entities = await this.scheduleTasksRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
@@ -104,9 +95,7 @@ export class ScheduleTasksRelationalRepository
     return entities.map((entity) => ScheduleTasksMapper.toDomain(entity));
   }
 
-  async findById(
-    id: ScheduleTasks['id'],
-  ): Promise<NullableType<ScheduleTasks>> {
+  async findById(id: ScheduleTasks['id']): Promise<NullableType<ScheduleTasks>> {
     const entity = await this.scheduleTasksRepository.findOne({
       where: { id },
     });
@@ -122,10 +111,7 @@ export class ScheduleTasksRelationalRepository
     return entities.map((entity) => ScheduleTasksMapper.toDomain(entity));
   }
 
-  async update(
-    id: ScheduleTasks['id'],
-    payload: Partial<ScheduleTasks>,
-  ): Promise<ScheduleTasks> {
+  async update(id: ScheduleTasks['id'], payload: Partial<ScheduleTasks>): Promise<ScheduleTasks> {
     const entity = await this.scheduleTasksRepository.findOne({
       where: { id },
     });
@@ -172,9 +158,7 @@ export class ScheduleTasksRelationalRepository
       console.log('Connessione SFTP stabilita.');
 
       const list = await sftp.list(remotePath);
-      console.log(
-        `Trovati ${list.length} file nella cartella remota: ${remotePath}`,
-      );
+      console.log(`Trovati ${list.length} file nella cartella remota: ${remotePath}`);
 
       for (const fileInfo of list) {
         if (fileInfo.type === '-') {
@@ -189,22 +173,16 @@ export class ScheduleTasksRelationalRepository
               nomeFile: fileInfo.name,
               dataModificata: new Date(fileInfo.modifyTime * 1000), // Converti timestamp Unix in oggetto Date
               contenuto: utf8Content,
-              jsonArrayObj: []
+              jsonArrayObj: [],
             });
             console.log(`File "${fileInfo.name}" letto con successo.`);
           } catch (err) {
-            console.error(
-              `Errore durante la lettura del file "${fileInfo.name}":`,
-              err,
-            );
+            console.error(`Errore durante la lettura del file "${fileInfo.name}":`, err);
           }
         }
       }
     } catch (err) {
-      console.error(
-        "Errore durante la connessione SFTP o l'elenco dei file:",
-        err,
-      );
+      console.error("Errore durante la connessione SFTP o l'elenco dei file:", err);
     } finally {
       await sftp.end();
       console.log('Connessione SFTP chiusa.');
@@ -257,7 +235,7 @@ export class ScheduleTasksRelationalRepository
           contenuto: datiFile.contenuto,
           dataModificata: datiFile.dataModificata,
           nomeFile: datiFile.nomeFile,
-          jsonArrayObj
+          jsonArrayObj,
         } as FileRemote;
       });
 
@@ -270,23 +248,62 @@ export class ScheduleTasksRelationalRepository
   }
 
   async GeneroOrdFor(manager: EntityManager) {
-    const max = await manager
-      .getRepository(AppReq3HypServEntity)
-      .createQueryBuilder()
-      .select('MAX(PROGR) + 1', 'maxProgr')
-      .getRawOne();
+    const max = await manager.getRepository(AppReq3HypServEntity).createQueryBuilder().select('MAX(PROGR) + 1', 'maxProgr').getRawOne();
 
-    const componente = this.makeComponentiOffFor();
-
-    const righeArray: Array<any> = await this.ConvertCsvToJson();
+    const righeArray: Array<FileRemote> = await this.ConvertCsvToJson();
 
     console.log(righeArray);
 
-    // for (const element of righeArray) {
-    //   righeArray.push(
-    //     ...this.makeComponentiOffForRiga(element.COD_ART, element.QUANT_RIGA),
-    //   );
-    // }
+    const queryBuilder = manager.getRepository(ArtCodiciEntity).createQueryBuilder();
+
+    for (const element of righeArray) {
+      const righeInsert: string[] = [];
+      const NOTE_STAMPA_arr: string[] = [];
+      for (const riga of element.jsonArrayObj) {
+        const result = await queryBuilder
+          .select('COD_ART')
+          .where('TIPO_CODICE=:TIPO_CODICE', {
+            TIPO_CODICE: process.env.SCCOCKPIT_LIVE_ORDERS_NO_COD_SECONDARIO_ART,
+          })
+          .andWhere('COD_SECONDARIO_ART=:COD_SECONDARIO_ART', {
+            COD_SECONDARIO_ART: String(riga['Item Id']),
+          })
+          .getRawOne();
+
+        if (result != null && riga['Requested Quantity'] != null && riga['Item Id'] != null && riga['Plo Status'] == 'approved') {
+          righeInsert.push(...this.makeComponentiOffForRiga(String(riga['Item Id']), String(riga['Requested Quantity'])));
+        } else {
+          const notFound = result == null ? '' : '(non in HG)';
+          NOTE_STAMPA_arr.push(`${riga['Item Id']} ${riga['Plo Status']} ${riga['Requested Quantity']} ${notFound}\n`);
+        }
+      }
+
+      const noteStampa = NOTE_STAMPA_arr.join('')
+      const componente = this.makeComponentiOffFor(noteStampa)
+      componente.push(...righeInsert)
+
+      const componenteStr = componente.join('')
+      
+      const result = await manager
+        .getRepository(AppReq3HypServEntity)
+        .createQueryBuilder()
+        .insert()
+        .into(AppReq3HypServEntity)
+        .values([
+          {
+            UTENTE_FROM: process.env.SCCOCKPIT_LIVE_ORDERS_UTENTE_FROM || '',
+            PROGR: max?.maxProgr || 1,
+            CHIAVE_ESTERNA: crypto.randomUUID(),
+            NUM_AZIENDA: Number(process.env.SCCOCKPIT_LIVE_ORDERS_AZIENDA_ID || ''),
+            DATAORA_RICHIESTA: new Date(),
+            COD_REQ3_HYPSERV: APP_REQ3_HYPSERV_TIPO_RICHIESTA.DOCUMENTI,
+            CAMPO_PARAMETRI: componenteStr,
+          },
+        ])
+        .execute();
+    }
+
+    // const componente = this.makeComponentiOffFor();
 
     // const righeText = righeArray.join('');
 
@@ -315,19 +332,18 @@ export class ScheduleTasksRelationalRepository
   // ---------------------------------------------- Genera km liberi ---------------------------------------------------
   // -------------------------------------------------------------------------------------------------------------------
 
-  private makeComponentiOffFor(): string {
+  private makeComponentiOffFor(noteStampa:string): Array<string> {
     const copyAppReq3Text = [...appReqTestataDefaultParams];
 
     copyAppReq3Text[3] = process.env.SCCOCKPIT_LIVE_ORDERS_CF_CLI || '';
     copyAppReq3Text[6] = process.env.SCCOCKPIT_LIVE_ORDERS_COD_CAUS_DOC || '';
 
-    return copyAppReq3Text.join('');
+    copyAppReq3Text[9] = noteStampa;
+
+    return copyAppReq3Text;
   }
 
-  private makeComponentiOffForRiga(
-    COD_ART: string,
-    QUANT: string,
-  ): Array<string> {
+  private makeComponentiOffForRiga(COD_ART: string, QUANT: string): Array<string> {
     const copyAppReq3Text = [...appReqRigaDefaultParams];
 
     copyAppReq3Text[5] = COD_ART;
@@ -338,9 +354,5 @@ export class ScheduleTasksRelationalRepository
 
   // -----------------------------------------------------------------------
 
-  async SalvoConErroreEsecuzione(
-    tipo: TIPO_ERRORI_SYNC,
-    manager: EntityManager,
-    id: string,
-  ) {}
+  async SalvoConErroreEsecuzione(tipo: TIPO_ERRORI_SYNC, manager: EntityManager, id: string) {}
 }

@@ -5,14 +5,15 @@ import { CfController } from './cf.controller';
 import { CfService } from './cf.service';
 import { RelationalCfPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 
-const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
+const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
+  .isDocumentDatabase
   ? RelationalCfPersistenceModule
   : RelationalCfPersistenceModule;
 
 @Module({
   imports: [
     // import modules, etc.
-    infrastructurePersistenceModule
+    infrastructurePersistenceModule,
   ],
   controllers: [CfController],
   providers: [CfService],

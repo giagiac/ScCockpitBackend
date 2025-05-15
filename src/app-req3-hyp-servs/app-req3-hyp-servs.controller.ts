@@ -1,11 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { AppReq3HypServsService } from './app-req3-hyp-servs.service';
 import { CreateAppReq3HypServDto } from './dto/create-app-req3-hyp-serv.dto';
 import { UpdateAppReq3HypServDto } from './dto/update-app-req3-hyp-serv.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AppReq3HypServ } from './domain/app-req3-hyp-serv';
 import { AuthGuard } from '@nestjs/passport';
-import { InfinityPaginationResponse, InfinityPaginationResponseDto } from '../utils/dto/infinity-pagination-response.dto';
+import {
+  InfinityPaginationResponse,
+  InfinityPaginationResponseDto,
+} from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllAppReq3HypServsDto } from './dto/find-all-app-req3-hyp-servs.dto';
 
@@ -17,7 +36,9 @@ import { FindAllAppReq3HypServsDto } from './dto/find-all-app-req3-hyp-servs.dto
   version: '1',
 })
 export class AppReq3HypServsController {
-  constructor(private readonly appReq3HypServsService: AppReq3HypServsService) {}
+  constructor(
+    private readonly appReq3HypServsService: AppReq3HypServsService,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({
@@ -31,7 +52,9 @@ export class AppReq3HypServsController {
   @ApiOkResponse({
     type: InfinityPaginationResponse(AppReq3HypServ),
   })
-  async findAll(@Query() query: FindAllAppReq3HypServsDto): Promise<InfinityPaginationResponseDto<AppReq3HypServ>> {
+  async findAll(
+    @Query() query: FindAllAppReq3HypServsDto,
+  ): Promise<InfinityPaginationResponseDto<AppReq3HypServ>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
@@ -71,8 +94,14 @@ export class AppReq3HypServsController {
   @ApiOkResponse({
     type: AppReq3HypServ,
   })
-  update(@Param('COD_CHIAVE') COD_CHIAVE: number, @Body() updateAppReq3HypServDto: UpdateAppReq3HypServDto) {
-    return this.appReq3HypServsService.update(COD_CHIAVE, updateAppReq3HypServDto);
+  update(
+    @Param('COD_CHIAVE') COD_CHIAVE: number,
+    @Body() updateAppReq3HypServDto: UpdateAppReq3HypServDto,
+  ) {
+    return this.appReq3HypServsService.update(
+      COD_CHIAVE,
+      updateAppReq3HypServDto,
+    );
   }
 
   @Delete(':COD_CHIAVE')

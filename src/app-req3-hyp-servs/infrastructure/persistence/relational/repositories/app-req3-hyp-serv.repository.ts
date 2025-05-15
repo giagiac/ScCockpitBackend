@@ -9,7 +9,9 @@ import { AppReq3HypServMapper } from '../mappers/app-req3-hyp-serv.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 
 @Injectable()
-export class AppReq3HypServRelationalRepository implements AppReq3HypServRepository {
+export class AppReq3HypServRelationalRepository
+  implements AppReq3HypServRepository
+{
   constructor(
     @InjectRepository(AppReq3HypServEntity)
     private readonly appReq3HypServRepository: Repository<AppReq3HypServEntity>,
@@ -17,11 +19,17 @@ export class AppReq3HypServRelationalRepository implements AppReq3HypServReposit
 
   async create(data: AppReq3HypServ): Promise<AppReq3HypServ> {
     const persistenceModel = AppReq3HypServMapper.toPersistence(data);
-    const newEntity = await this.appReq3HypServRepository.save(this.appReq3HypServRepository.create(persistenceModel));
+    const newEntity = await this.appReq3HypServRepository.save(
+      this.appReq3HypServRepository.create(persistenceModel),
+    );
     return AppReq3HypServMapper.toDomain(newEntity);
   }
 
-  async findAllWithPagination({ paginationOptions }: { paginationOptions: IPaginationOptions }): Promise<AppReq3HypServ[]> {
+  async findAllWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }): Promise<AppReq3HypServ[]> {
     const entities = await this.appReq3HypServRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
@@ -30,7 +38,9 @@ export class AppReq3HypServRelationalRepository implements AppReq3HypServReposit
     return entities.map((entity) => AppReq3HypServMapper.toDomain(entity));
   }
 
-  async findById(COD_CHIAVE: AppReq3HypServ['COD_CHIAVE']): Promise<NullableType<AppReq3HypServ>> {
+  async findById(
+    COD_CHIAVE: AppReq3HypServ['COD_CHIAVE'],
+  ): Promise<NullableType<AppReq3HypServ>> {
     const entity = await this.appReq3HypServRepository.findOne({
       where: { COD_CHIAVE },
     });
@@ -38,7 +48,9 @@ export class AppReq3HypServRelationalRepository implements AppReq3HypServReposit
     return entity ? AppReq3HypServMapper.toDomain(entity) : null;
   }
 
-  async findByIds(ids: AppReq3HypServ['COD_CHIAVE'][]): Promise<AppReq3HypServ[]> {
+  async findByIds(
+    ids: AppReq3HypServ['COD_CHIAVE'][],
+  ): Promise<AppReq3HypServ[]> {
     const entities = await this.appReq3HypServRepository.find({
       where: { COD_CHIAVE: In(ids) },
     });
@@ -46,7 +58,10 @@ export class AppReq3HypServRelationalRepository implements AppReq3HypServReposit
     return entities.map((entity) => AppReq3HypServMapper.toDomain(entity));
   }
 
-  async update(COD_CHIAVE: AppReq3HypServ['COD_CHIAVE'], payload: Partial<AppReq3HypServ>): Promise<AppReq3HypServ> {
+  async update(
+    COD_CHIAVE: AppReq3HypServ['COD_CHIAVE'],
+    payload: Partial<AppReq3HypServ>,
+  ): Promise<AppReq3HypServ> {
     const entity = await this.appReq3HypServRepository.findOne({
       where: { COD_CHIAVE },
     });

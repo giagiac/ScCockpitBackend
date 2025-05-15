@@ -2,8 +2,6 @@
 // import { Allow } from 'class-validator';
 
 import { PartialType } from '@nestjs/swagger';
-import { CreateScheduleTasksDto } from './create-schedule-tasks.dto';
+import { CreateArtCodiciDto } from './create-art-codici.dto';
 
-export class UpdateScheduleTasksDto extends PartialType(
-  CreateScheduleTasksDto,
-) {}
+export class UpdateArtCodiciDto extends PartialType(CreateArtCodiciDto) {}

@@ -5,7 +5,8 @@ import { RelationalScheduleTasksPersistenceModule } from './infrastructure/persi
 import { ScheduleTasksController } from './schedule-tasks.controller';
 import { ScheduleTasksService } from './schedule-tasks.service';
 
-const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
+const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
+  .isDocumentDatabase
   ? RelationalScheduleTasksPersistenceModule
   : RelationalScheduleTasksPersistenceModule;
 
